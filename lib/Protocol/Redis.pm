@@ -5,16 +5,19 @@ use warnings;
 
 require Carp;
 
-our $VERSION = 0.9002;
+our $VERSION = 1.0;
 
 sub new {
     my $class = shift;
     $class = ref $class if ref $class;
 
     my $self = {@_};
+
+    return unless $self->{api} == '1';
+
     bless $self, $class;
 
-    $self->on_message($self->{on_message});
+    $self->on_message(delete $self->{on_message});
     $self->{_messages} = [];
 
     $self->{_state} = \&_state_new_message;
@@ -22,10 +25,10 @@ sub new {
     $self;
 }
 
-sub use_api {
-    my ($self, $api_version) = @_;
+sub api {
+    my $self = shift;
 
-    return $api_version == 1;
+    $self->{api};
 }
 
 my %message_type_encoders = (
@@ -91,26 +94,12 @@ sub on_message {
     $self->{_on_message_cb} = $cb;
 }
 
-sub get_command {
-    my $self = shift;
-    warn <<EOF;
-Protocol::Redis->get_command renamed to Protocol::Redis->get_message
-EOF
-    $self->get_message(@_);
-}
-
-sub on_command {
-    my $self = shift;
-    warn <<EOF;
-Protocol::Redis->on_command renamed to Protocol::Redis->on_message
-EOF
-    $self->on_message(@_);
-}
-
 sub parse {
     my ($self, $chunk) = @_;
 
-    # Just pass chunk to current vertex
+    # Pass chunk to current vertex.
+    # Some vertices can return unparsed chunk. In this case 
+    # cycle will pass chunk to next vertex.
     1 while $chunk = $self->{_state}->($self, $chunk);
 }
 
@@ -149,9 +138,8 @@ sub _state_parse_message_type {
             $self->{_state} = $parser;
             return $chunk;
         }
-        else {
-            Carp::croak(qq/Unexpected input "$cmd"/);
-        }
+
+        Carp::croak(qq/Unexpected input "$cmd"/);
     }
 }
 
@@ -334,20 +322,21 @@ Protocol::Redis - Redis protocol parser/encoder with asynchronous capabilities.
 
 Redis protocol parser/encoder with asynchronous capabilities and L<pipelining|http://redis.io/topics/pipelining> support.
 
-=head1 APIv1 (DRAFT)
+=head1 APIv1
 
 Protocol::Redis APIv1 uses
 "L<Unified Request Protocol|http://redis.io/topics/protocol>" for message
 encoding/parsing and supports methods described further. Client libraries
-should call $redis->use_api(1) to start using APIv1.
+should specify API version during Protocol::Redis construction.
 
-=head2 C<use_api>
+=head2 C<new>
 
-    $redis->use_api(1) or die "API v1 not supported";
+    my $redis = Protocol::Redis->new(api => 1)
+        or die "API v1 not supported";
 
-Tell Protocol::Redis to use specific API version. Return false if API version
-not supported. Client libraries should call this method first and check
-returned value.
+Construct Protocol::Redis object with specific API version support.
+If specified API version not supported constructor returns undef.
+Client libraries should always specify API version.
 
 =head2 C<parse>
 
@@ -381,6 +370,13 @@ Calls callback on each parsed message.
 
 Encode data into redis message.
 
+=head2 C<api>
+
+    my $api_version = $redis->api;
+
+Get API version.
+
+
 =head1 SUPPORT
 
 =head2 IRC
@@ -399,7 +395,17 @@ Sergey Zasenko, C<undef@cpan.org>.
 
 =head1 CREDITS
 
+In alphabetical order
+
+=over 2
+
 David Leadbeater (dgl)
+
+Viacheslav Tykhanovskyi (vti)
+
+Yaroslav Korshak (yko)
+
+=back
 
 =head1 COPYRIGHT AND LICENSE
 

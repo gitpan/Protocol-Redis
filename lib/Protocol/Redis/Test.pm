@@ -12,10 +12,10 @@ use Test::More;
 require Carp;
 
 sub protocol_redis_ok($$) {
-    my ($redis, $api_version) = @_;
+    my ($redis_class, $api_version) = @_;
 
     if ($api_version == 1) {
-        _apiv1_ok($redis);
+        _apiv1_ok($redis_class);
     }
     else {
         Carp::croak(qq/Unknown Protocol::Redis API version $api_version/);
@@ -23,14 +23,18 @@ sub protocol_redis_ok($$) {
 }
 
 sub _apiv1_ok {
-    my $redis = shift;
+    my $redis_class = shift;
 
     subtest 'Protocol::Redis APIv1 ok' => sub {
-        plan tests => 36;
+        plan tests => 38;
 
-        can_ok $redis, 'parse', 'use_api', 'on_message', 'encode';
+        use_ok $redis_class;
 
-        ok $redis->use_api(1), '$redis->use_api(1)';
+        my $redis = new_ok $redis_class, [api => 1];
+
+        can_ok $redis, 'parse', 'api', 'on_message', 'encode';
+
+        is $redis->api, 1, '$redis->api';
 
         # Parsing method tests
         $redis->on_message(undef);
@@ -286,14 +290,11 @@ Protocol::Redis::Test - reusable tests for Protocol::Redis implementations.
 
 =head1 SYNOPSIS
 
-    use Test::More plan => 5;
+    use Test::More tests => 1;
     use Protocol::Redis::Test;
 
-    use_ok 'Protocol::Redis';
-    my $redis = new_ok 'Protocol::Redis';
-
     # Test Protocol::Redis API 
-    protocol_redis_ok $redis, 1;
+    protocol_redis_ok 'Protocol::Redis', 1;
 
 =head1 DESCRIPTION
 
@@ -303,9 +304,9 @@ Reusable tests for Protocol::Redis implementations.
 
 =head2 C<protocol_redis_ok>
 
-    protocol_redis_ok $redis, 1;
+    protocol_redis_ok $redis_class, 1;
 
-Check if $redis implementation of Protocol::Redis meets API version 1
+Check if $redis_class implementation of Protocol::Redis meets API version 1
 
 =head1 SEE ALSO
 

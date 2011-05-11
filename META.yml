@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               Protocol-Redis
-version:            0.9002
+version:            1
 abstract:           Redis protocol parser/encoder with asynchronous capabilities.
 author:
     - Sergey Zasenko <undef@cpan.org>
