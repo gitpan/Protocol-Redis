@@ -1,25 +1,30 @@
---- #YAML:1.0
-name:               Protocol-Redis
-version:            1
-abstract:           Redis protocol parser/encoder with asynchronous capabilities.
+---
+abstract: 'Redis protocol parser/encoder with asynchronous capabilities.'
 author:
-    - Sergey Zasenko <undef@cpan.org>
-license:            perl
-distribution_type:  module
-configure_requires:
-    ExtUtils::MakeMaker:  0
+  - 'Sergey Zasenko, C<undef@cpan.org>.'
 build_requires:
-    Test::More:  0.88
-requires:
-    Carp:        0
-    List::Util:  0
-resources:
-    repository:  http://github.com/und3f/protocol-redis
-no_index:
-    directory:
-        - t
-        - inc
-generated_by:       ExtUtils::MakeMaker version 6.56
+  ExtUtils::MakeMaker: 6.42
+configure_requires:
+  ExtUtils::MakeMaker: 6.42
+distribution_type: module
+generated_by: 'Module::Install version 1.01'
+license: perl
 meta-spec:
-    url:      http://module-build.sourceforge.net/META-spec-v1.4.html
-    version:  1.4
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: Protocol-Redis
+no_index:
+  directory:
+    - inc
+    - t
+    - xt
+requires:
+  Carp: 0
+  List::Util: 0
+  Test::More: 0.88
+  perl: 5.8.1
+resources:
+  bugtracker: https://github.com/und3f/protocol-redis/issues
+  license: http://dev.perl.org/licenses/
+  repository: http://github.com/und3f/protocol-redis
+version: 1.0001
