@@ -3,9 +3,9 @@ abstract: 'Redis protocol parser/encoder with asynchronous capabilities.'
 author:
   - 'Sergey Zasenko, C<undef@cpan.org>.'
 build_requires:
-  ExtUtils::MakeMaker: 6.62
+  ExtUtils::MakeMaker: 6.59
 configure_requires:
-  ExtUtils::MakeMaker: 6.62
+  ExtUtils::MakeMaker: 6.59
 distribution_type: module
 dynamic_config: 1
 generated_by: 'Module::Install version 1.04'
@@ -28,4 +28,4 @@ resources:
   bugtracker: https://github.com/und3f/protocol-redis/issues
   license: http://dev.perl.org/licenses/
   repository: http://github.com/und3f/protocol-redis
-version: 1.0002
+version: 1.0003

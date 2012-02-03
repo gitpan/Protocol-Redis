@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use 5.008_001;
 
-our $VERSION = 1.0002;
+our $VERSION = 1.0003;
 
 require Carp;
 
@@ -86,8 +86,7 @@ sub _encode_multi_bulk {
 
 
 sub get_message {
-    my ($self) = @_;
-    shift @{$self->{_messages}};
+    shift @{$_[0]->{_messages}};
 }
 
 sub on_message {
@@ -292,10 +291,7 @@ Protocol::Redis - Redis protocol parser/encoder with asynchronous capabilities.
 =head1 SYNOPSIS
 
     use Protocol::Redis;
-    my $redis = Protocol::Redis->new;
-
-    # Init used API version
-    $redis->use_api(1) or die "API v1 not supported";
+    my $redis = Protocol::Redis->new(api => 1) or die "API v1 not supported";
 
     $redis->parse("+foo\r\n");
 
